@@ -13,10 +13,10 @@ To run:
 	cd bin/
 	./client
   ```
-2) If you want to run client application, compile client application and type:
+2) If you want to run server application, compile server application and type:
   ```
 	cd bin/
-	./client
+	./server
   ```
 
 
