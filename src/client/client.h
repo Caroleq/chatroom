@@ -16,15 +16,22 @@ namespace chatroom{
   class client{
 
     private:
-	int fd_socket; 
-	struct sockaddr_in socket_address;
+	int recv_fd; 
+	int send_fd;
+	struct sockaddr_in recv_address;
+	struct sockaddr_in send_address;
 	int is_error;
 
    public:
-	client(std::string, int );
-	~client(){ close(fd_socket);}
-	int connect_to_server();
-	int get_socket(){ return fd_socket;}         
+	client(std::string, int,int );
+	~client(){ 
+		close(recv_fd);
+		close(send_fd);
+	}
+	void get_recv_connection();
+	void get_send_connection();
+	int get_recv_socket(){ return recv_fd;}
+	int get_send_socket(){ return send_fd; }         
 
   };
 

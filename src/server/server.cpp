@@ -2,31 +2,73 @@
 using namespace chatroom;
 
 
-server::server(std::string address="127.0.0.1", int port=1500 ):is_error(0){
+server::server(std::string address="127.0.0.1", int port1=1500, int port2=1501):is_error(0){
 
-   fd_socket = socket(AF_INET, SOCK_STREAM, 0);
-   if( fd_socket < 0)
-	is_error = 1;
+   recv_fd = socket(AF_INET, SOCK_STREAM, 0);
+   if( recv_fd < 0)
+	      is_error = 1;
 
-   socket_address.sin_family = AF_INET;
-   socket_address.sin_addr.s_addr = inet_addr(address.c_str());
-   socket_address.sin_port = htons(port);
+   recv_address.sin_family = AF_INET;
+   recv_address.sin_addr.s_addr = inet_addr(address.c_str());
+   recv_address.sin_port = htons(port1);//htons(port);
 
-   sock_size = sizeof(socket_address);
+   recv_sock_size = sizeof(recv_address);
+
+   send_fd = socket(AF_INET, SOCK_STREAM, 0);
+
+   if( send_fd < 0 )
+      is_error = 1;
+
+   send_address.sin_family = AF_INET;
+   send_address.sin_addr.s_addr = inet_addr(address.c_str());
+   send_address.sin_port = htons(port2);//htons(port);
+
+   send_sock_size = sizeof(send_address);
 }
 
 
-int server::get_connection(){
-   int b = bind(fd_socket, (struct sockaddr*)&socket_address, sizeof(socket_address));
-   if (b < 0)
-	is_error = 1;
+void server::get_recv_connection(){
 
-   listen(fd_socket,1);
-   fd_connection = accept(fd_socket, (struct sockaddr*)&socket_address, &sock_size);
-   if( fd_connection<0)
-	is_error = 1;
+//   std::cout << "Binded to send?" << std::endl;
+  int b;
+   
+   b = bind(recv_fd, (struct sockaddr*)&recv_address, sizeof(recv_address));
+   if (b < 0){
+      is_error = 1;
+      std::cout << "recv connection error" <<std::endl;
+    }
+       
 
-   return fd_connection;
+   listen(recv_fd,1);
+   fd_connection_recv = accept(recv_fd, (struct sockaddr*)&recv_address, &recv_sock_size);
+
+   if (fd_connection_recv < 0){
+      is_error = 1;
+      std::cout << "Accept recv connection error" <<std::endl;
+    }
+
+    
 }
 
+
+void server::get_send_connection()
+{
+
+  int b;
+
+   b = bind(send_fd, (struct sockaddr*)&send_address, sizeof(send_address));
+   if (b < 0){
+      is_error = 1;
+      std::cout << "Send connection error" <<std::endl;
+    }
+       
+   listen(send_fd, 1);
+   fd_connection_send = accept(send_fd, (struct sockaddr*)&send_address, &send_sock_size);
+
+   if (fd_connection_send < 0){
+      is_error = 1;
+      std::cout << "Accept send connection error" <<std::endl;
+    }
+
+}
 

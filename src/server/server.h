@@ -9,27 +9,37 @@
 #include <arpa/inet.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <thread>
 
 namespace chatroom{
 
     class server{
 
 	private:
-	    int fd_socket;
-	    sockaddr_in socket_address;
-	    socklen_t sock_size;
-	    int fd_connection;
+	    int fd_connection_recv;
+	    int fd_connection_send;
+	    sockaddr_in recv_address;
+	    sockaddr_in send_address;
+	    socklen_t recv_sock_size;
+	    socklen_t send_sock_size;
+	    int recv_fd;
+	    int send_fd;
 	    int is_error;
 
 	public:
-	    server(std::string, int);
+	    server(std::string, int, int);
 	    ~server(){
-		close(fd_socket);
-		close(fd_connection);
+		      close(recv_fd);
+		      close(send_fd);
+		      close(fd_connection_recv);
+		      close(fd_connection_send);
 	     }
-	   int get_connection();
-	   int get_conn_fd(){ return fd_connection;}
-	   int get_socket(){ return fd_socket;}  
+	   void get_recv_connection();
+	   void get_send_connection();
+	   int get_conn_fd_recv(){ return fd_connection_recv;}
+	   int get_conn_fd_send(){ return fd_connection_send;}
+	   int get_recv_socket(){ return recv_fd;}
+	   int get_send_socket(){ return send_fd;}  
     };
 }
 

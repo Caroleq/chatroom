@@ -17,7 +17,7 @@ endif
 SOURCES := $(shell find $(SRC) -type f -name "*.cpp")
 OBJS := $(SOURCES:$(SRC)/%.cpp=$(BUILD)/%.o)
 
-FLAGS := -Wall -std=c++11
+FLAGS := -Wall -std=c++11 -lpthread
 
 all: $(TARGET)
 	@true
@@ -25,7 +25,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	@mkdir -p bin
 	@mkdir -p $(@D)
-	@$(LD) $+ -o $@
+	@$(LD) $+ $(FLAGS) -o $@
 	@echo "Building $@"
 
 $(BUILD)/%.o: $(SRC)/%.cpp 
