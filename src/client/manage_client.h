@@ -1,8 +1,6 @@
 #ifndef CLIENT_MANAGER_H
 #define CLIENT_MANAGER_H
 #include"client.h"
-#include <thread>
-#include <mutex>
 using namespace chatroom;
 
 
@@ -13,10 +11,9 @@ class client_manager{
    int port_send;
    int port_recv; 
    int valid;
-   std::mutex m;
 public:
 	client_manager(std::string, int, int );
-     ~client_manager(){ delete c; }
+  ~client_manager(){ delete c; }
 	int manage_connection();
 
 private:

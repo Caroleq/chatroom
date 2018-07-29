@@ -4,70 +4,77 @@ using namespace chatroom;
 
 server::server(std::string address="127.0.0.1", int port1=1500, int port2=1501):is_error(0){
 
-   recv_fd = socket(AF_INET, SOCK_STREAM, 0);
-   if( recv_fd < 0)
+  /*
+    Creates sockets (file descriptores sored in recv_fd and send_fd)
+    Socket address are stored in recv_address and send_address.
+
+  */
+
+   fd_A = socket(AF_INET, SOCK_STREAM, 0);
+   if( fd_A < 0)
 	      is_error = 1;
 
-   recv_address.sin_family = AF_INET;
-   recv_address.sin_addr.s_addr = inet_addr(address.c_str());
-   recv_address.sin_port = htons(port1);//htons(port);
+   address_A.sin_family = AF_INET;
+   address_A.sin_addr.s_addr = inet_addr(address.c_str());
+   address_A.sin_port = htons(port1);
+   sock_size_A = sizeof(address_A);
 
-   recv_sock_size = sizeof(recv_address);
+   int b = bind(fd_A, (struct sockaddr*)&address_A, sizeof(address_A));
+   if (b < 0){
+      is_error = 1;
+      std::cout << "A address connection error" <<std::endl;
+    }
 
-   send_fd = socket(AF_INET, SOCK_STREAM, 0);
+   fd_B = socket(AF_INET, SOCK_STREAM, 0);
 
-   if( send_fd < 0 )
+   if( fd_B < 0 )
       is_error = 1;
 
-   send_address.sin_family = AF_INET;
-   send_address.sin_addr.s_addr = inet_addr(address.c_str());
-   send_address.sin_port = htons(port2);//htons(port);
+   address_B.sin_family = AF_INET;
+   address_B.sin_addr.s_addr = inet_addr(address.c_str());
+   address_B.sin_port = htons(port2);
 
-   send_sock_size = sizeof(send_address);
+   sock_size_B = sizeof(address_B);
+
+   b = bind(fd_B, (struct sockaddr*)&address_B, sizeof(address_B));
+   if (b < 0){
+      is_error = 1;
+      std::cout << "Send connection error" <<std::endl;
+    }
 }
 
 
-void server::get_recv_connection(){
+void server::accept_connection_A(){
 
-//   std::cout << "Binded to send?" << std::endl;
-  int b;
-   
-   b = bind(recv_fd, (struct sockaddr*)&recv_address, sizeof(recv_address));
-   if (b < 0){
+  /*
+    Awaits for connection on address_A
+  */   
+
+   listen(fd_A, 1);
+   fd_connection_A = accept(fd_A, (struct sockaddr*)&address_A, &sock_size_A);
+
+   if ( fd_connection_A < 0 ){
       is_error = 1;
-      std::cout << "recv connection error" <<std::endl;
-    }
-       
-
-   listen(recv_fd,1);
-   fd_connection_recv = accept(recv_fd, (struct sockaddr*)&recv_address, &recv_sock_size);
-
-   if (fd_connection_recv < 0){
-      is_error = 1;
-      std::cout << "Accept recv connection error" <<std::endl;
+      std::cout << "Connection on A failed" << std::endl;
     }
 
     
 }
 
 
-void server::get_send_connection()
+void server::accept_connection_B()
 {
 
-  int b;
-
-   b = bind(send_fd, (struct sockaddr*)&send_address, sizeof(send_address));
-   if (b < 0){
-      is_error = 1;
-      std::cout << "Send connection error" <<std::endl;
-    }
+  /*
+    Awaits for connection on address_B
+  */ 
        
-   listen(send_fd, 1);
-   fd_connection_send = accept(send_fd, (struct sockaddr*)&send_address, &send_sock_size);
+   listen(fd_B, 1);
+   fd_connection_B = accept(fd_B, (struct sockaddr*)&address_B, &sock_size_B);
 
-   if (fd_connection_send < 0){
+   if ( fd_connection_B < 0 ){
       is_error = 1;
-      std::cout << "Accept send connection error" <<std::endl;
+      std::cout << "Connection on B failed" <<std::endl;
     }
 
 }
