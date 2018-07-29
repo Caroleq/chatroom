@@ -5,9 +5,9 @@ using namespace chatroom;
 server::server(std::string address="127.0.0.1", int port1=1500, int port2=1501):is_error(0){
 
   /*
-    Creates sockets (file descriptores sored in recv_fd and send_fd)
-    Socket address are stored in recv_address and send_address.
-
+    Creates sockets (file descriptores sored in fd_A and fd_B)
+    Socket address are stored in address_A and address_B
+    Then socket is binded to address
   */
 
    fd_A = socket(AF_INET, SOCK_STREAM, 0);
