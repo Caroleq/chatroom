@@ -5,14 +5,21 @@
 #include<thread>
 #include <iomanip>
 
+/*
+
+    Class for creating server connection
+    Enables parallel message sending and receiving
+
+*/
+
 namespace chatroom{
  class server_manager{
 
-  server *s;
+   server *s;
    std::string address;
    int send_port;
    int recv_port; 
-   int valid;
+   int conversation_end_signal;
   public:
    server_manager(std::string address, int port1,int port2);
    ~server_manager(){

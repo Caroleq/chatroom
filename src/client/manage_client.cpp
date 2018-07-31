@@ -12,6 +12,8 @@ client_manager::client_manager(std::string address, int port_send, int port_recv
    std::cout << "\033[3;32mClient will receive at:" << address << " " << port_send << "\033[0m" << std::endl;
    std::cout << "\033[3;32mClient will send at:" << address << " " << port_recv << "\033[0m" << std::endl;
 
+   conversation_end_signal = 0;
+
 }
 
 int client_manager::manage_connection()
@@ -28,25 +30,33 @@ int client_manager::manage_connection()
   
   receive.join();
   send.join();
+
+  conversation_end_signal = 0;
   return 0;
 }
 
 
 void client_manager::send_data_over_connection(int fd)
 {
-      c->get_send_connection();
 
       int buf_size = 2000;
       char *buffer = new char[buf_size];
 
-      int sock = c->get_send_socket();
+      c->fd_B_connect();
+      int sock = c->get_fd_B_socket();
 
       while( 1 ){
 
         std::cin >> buffer;
+
+        if( conversation_end_signal )
+          break;
+
         send( sock, buffer, buf_size, 0);
+
         if( !strncmp("Quit", buffer, 5)){
           std::cout << "\033[3;31mTerminating conversation\033[0m"  << std::endl;
+          conversation_end_signal = 1;
           break;
         }
 
@@ -57,25 +67,28 @@ void client_manager::send_data_over_connection(int fd)
 
 void client_manager::recv_data_over_connection(int fd)
 {
-       int buf_size = 2000;
+      int buf_size = 2000;
       char *buffer = new char[buf_size];
 
-      c->get_recv_connection();
-      int sock = c->get_recv_socket();
-
+      c->fd_A_connect();
+      int sock = c->get_fd_A_socket();
 
       while( 1 ){ 
         
         recv(sock, buffer, buf_size, 0);
 
         std::cout << "\033[3;37mServer: " << buffer << "\033[0m" << std::endl;
+
         if( !strncmp("Quit", buffer, 5)){
           std::cout << "\033[3;31mTerminating conversation\033[0m" << std::endl;
+          conversation_end_signal = 1;
           break;
         }
 
+        if( conversation_end_signal )
+          break;
+
       }
       delete [] buffer;
-
 
 }

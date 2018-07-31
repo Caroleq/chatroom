@@ -13,10 +13,10 @@
 
 
 /*
-	Server class for chatroom.
-	In this program accepts connection from Client.
 
-	Creates two sockets with the same IP address, but may have different ports 
+		Server chatroom class 
+		Provides two sockets (the same IP address, but may have different port numbers)
+		In the program one socket is used for receiving, another for sending data
 
 */
 
@@ -45,12 +45,12 @@ namespace chatroom{
 		      close(fd_A);
 		      close(fd_B);
 	     }
-	   void accept_connection_A();
-	   void accept_connection_B();
 	   int get_conn_A(){ return fd_connection_A;}
 	   int get_conn_B(){ return fd_connection_B;}
 	   int get_fd_A_socket(){ return fd_A;}
 	   int get_fd_B_socket(){ return fd_B;}  
+	   void accept_connection_A();
+	   void accept_connection_B();
     };
 }
 

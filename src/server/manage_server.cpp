@@ -2,7 +2,7 @@
 using namespace chatroom;
 
 
-server_manager::server_manager(std::string address, int port1, int port2):valid(1){
+server_manager::server_manager(std::string address, int port1, int port2):conversation_end_signal(0){
 
 
    this->address = address;
@@ -23,10 +23,11 @@ int server_manager::manage_connection()
    std::cout << "\033[3;32mBinding port to the socket ..\033[0m" <<std::endl;
 
    std::thread send(&server_manager::send_data_over_connection, this, send_fd);
-   std::thread  receive(&server_manager::recv_data_over_connection, this, recv_fd);
+   std::thread receive(&server_manager::recv_data_over_connection, this, recv_fd);
 
    send.join();
    receive.join();
+   conversation_end_signal = 0;
   return 0;
 }
 
@@ -42,12 +43,16 @@ void server_manager::send_data_over_connection( int fd)
      std::cout << "\033[3;32mTo end conversation enter: 'Quit'\033[0m" << std::endl;
       while( 1 ){
 
-        std::cin >> buffer;          
+        std::cin >> buffer;
+
+        if( conversation_end_signal )
+          break;          
 
         send(sock, buffer, buf_size, 0);
 
         if( !strncmp("Quit", buffer, 5)){
           std::cout << "\033[3;31mTerminating conversation\033[0m"  << std::endl;
+          conversation_end_signal = 1;
           break;
         }
 
@@ -74,8 +79,12 @@ void server_manager::recv_data_over_connection(int fd)
 
         if( !strncmp("Quit", buffer, 5)){
           std::cout << "\033[3;31mTerminating conversation\033[0m"  << std::endl;
+          conversation_end_signal = 1;
           break;
         }
+
+        if( conversation_end_signal )
+          break;
 
       }
       delete [] buffer;
