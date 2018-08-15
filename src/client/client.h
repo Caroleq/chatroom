@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <thread>
 
+#include "../exceptions/connection_excp.h"
 
 /*
 
