@@ -22,7 +22,7 @@ server::server(std::string address="127.0.0.1", int port1=1500, int port2=1501):
    int b = bind(fd_A, (struct sockaddr*)&address_A, sizeof(address_A));
    if (b < 0){
       is_error = 1;
-      std::cout << "A address connection error" <<std::endl;
+      throw connection_exception("Failed to create fd_A socket");
     }
 
    fd_B = socket(AF_INET, SOCK_STREAM, 0);
@@ -39,7 +39,7 @@ server::server(std::string address="127.0.0.1", int port1=1500, int port2=1501):
    b = bind(fd_B, (struct sockaddr*)&address_B, sizeof(address_B));
    if (b < 0){
       is_error = 1;
-      std::cout << "Send connection error" <<std::endl;
+      throw connection_exception("Failed to create fd_B socket");
     }
 }
 
@@ -55,7 +55,7 @@ void server::accept_connection_A(){
 
    if ( fd_connection_A < 0 ){
       is_error = 1;
-      std::cout << "Connection on A failed" << std::endl;
+      throw connection_exception("Connecting failed for fd_A");
     }
 
     
@@ -74,7 +74,7 @@ void server::accept_connection_B()
 
    if ( fd_connection_B < 0 ){
       is_error = 1;
-      std::cout << "Connection on B failed" <<std::endl;
+     throw connection_exception("Connecting failed for fd_B");
     }
 
 }

@@ -37,7 +37,15 @@ void server_manager::send_data_over_connection( int fd)
 
      int buf_size = 2000;
      char *buffer = new char[buf_size];
-     s->accept_connection_B();     
+     try{
+         s->accept_connection_B();    
+     }
+     catch( connection_exception & c){
+        std::cout << "\033[3;31m" << c << "\033[0m" << std::endl;
+        delete [] buffer;
+        return;
+     }
+      
      int sock = s->get_conn_B();
 
      std::cout << "\033[3;32mTo end conversation enter: 'Quit'\033[0m" << std::endl;
@@ -68,7 +76,15 @@ void server_manager::recv_data_over_connection(int fd)
       int buf_size = 2000;
       char *buffer = new char[buf_size];
 
-      s->accept_connection_A();     
+     try{
+         
+         s->accept_connection_A();    
+      }
+      catch( connection_exception & c){
+        std::cout << "\033[3;31m" << c << "\033[0m" << std::endl;
+        delete [] buffer;
+        return;
+     }
       int sock = s->get_conn_A();
 
       while( 1 ){ 

@@ -42,7 +42,15 @@ void client_manager::send_data_over_connection(int fd)
       int buf_size = 2000;
       char *buffer = new char[buf_size];
 
-      c->fd_B_connect();
+      try{
+          c->fd_B_connect();
+      }
+      catch( connection_exception& c ){
+         std::cout << "\033[3;31m" << c << "\033[0m" << std::endl;
+         delete [] buffer;
+         return;
+      }
+      
       int sock = c->get_fd_B_socket();
 
       while( 1 ){
@@ -70,7 +78,16 @@ void client_manager::recv_data_over_connection(int fd)
       int buf_size = 2000;
       char *buffer = new char[buf_size];
 
-      c->fd_A_connect();
+      try{
+         c->fd_A_connect();
+      }
+      catch( const connection_exception&  c ){
+         std::cout << "\033[3;31m" << c << "\033[0m" << std::endl;
+         delete [] buffer;
+         return;
+      } 
+      
+      
       int sock = c->get_fd_A_socket();
 
       while( 1 ){ 
