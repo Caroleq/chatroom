@@ -1,22 +1,38 @@
 
-Following project is compatible only with Linux OS
+# Chatroom application
 
-To compile enter the main catalogue:
-1) If you want to compile client application, type 
-  ```make```
-2) If you want to compile server application, type
-  ```make ARG=server```
+Following application can be used for LAN communication. It is built on socket connections.
 
-To run:
-1) If you want to run client application, compile client application and type:
-  ```
-	cd bin/
-	./client
-  ```
-2) If you want to run server application, compile server application and type:
-  ```
-	cd bin/
-	./server
-  ```
+## Installation
+Just enter the main catalogue and type:
+1)
+```
+make
+```
+for client application
+or
+2) 
+```
+make ARG=server
+```
+for server application
+
+Executable file should appear in bin/ folder.
+
+To remove executable and object files type:
+```
+make clean
+```
+
+## Usage
+For client:
+```
+./bin/client -h [server address] -p_recv [receiving port] -p_send [sending port]
+```
+
+For server:
+```
+./bin/server -h [server address] -p_recv [receiving port] -p_send [sending port]
+```
 
 
